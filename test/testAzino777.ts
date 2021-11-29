@@ -31,8 +31,6 @@ describe("Token", function () {
             initialBalance
         }
     }
-
-
  
 
 
@@ -41,12 +39,7 @@ describe("Token", function () {
 
         let balanceDeployed
 
-        const valueSend : BigNumber = ethers.utils.parseEther("10")
-        
-        //await ethers.provider.getBalance(owner.address)        
-
-        //balanceDeployed = await ethers.provider.getBalance(deployed.address)
-        //balanceOwner = await ethers.provider.getBalance(owner.address)      
+        const valueSend : BigNumber = ethers.utils.parseEther("10")       
 
         const tx = await owner.sendTransaction({
             to: deployed.address,
@@ -64,32 +57,9 @@ describe("Token", function () {
 
 
     it('test actak smartContract', async() => {
-        //1. enviar eth
-        //2. calcular numero ramdom 
-        //3. ejecutar contrato 
-        //4. ganar 
-       
-        const {owner, user1, initialBalance, deployedAtack, deployed} = await setupAzio777(); 
-        
         
        
-
-
-        
-        //onst currentBlocknNumber = await ethers.provider.getBlockNumber();     
-
-        // console.log("balance inicial:" + ethers.utils.formatEther(initialBalance))
-
-        // //10000
-        // console.log("user1 :" + ethers.utils.formatEther(
-        //     await ethers.provider.getBalance(user1.address)
-        // ))
-
-
-        // //10
-        // console.log("balance Contract :" + ethers.utils.formatEther(
-        //     await ethers.provider.getBalance(deployed.address)
-        // ))
+        const {user1, initialBalance, deployedAtack} = await setupAzio777();         
 
         let valueSend : BigNumber = ethers.utils.parseEther("1")
 
@@ -102,30 +72,11 @@ describe("Token", function () {
         //https://github.com/ethers-io/ethers.js/issues/1449
         let tx = await deployedAtack.connect(user1).rand({value: valueSend})   
         
-        //balancesetupAzio777 = await ethers.provider.getBalance(user1.address)
+        const gasUsed :BigNumber = (await tx.wait()).gasUsed
+        const gasPrice : BigNumber = tx.gasPrice
+        const gasCost : BigNumber = gasUsed.mul(gasPrice)
 
-
-        // console.log("user1 - segunda vez :" + ethers.utils.formatEther(
-        //     await ethers.provider.getBalance(user1.address)
-        // ))
-
-        // console.log("balance Contract - segunda vez:" + ethers.utils.formatEther(
-        //     await ethers.provider.getBalance(deployed.address)
-        // ))
-
-        
-        
-
-        // console.log("valor esperado en eht: " + ethers.utils.formatEther(valorEsperado))
-
-        console.log("balance user1: " +  ethers.utils.formatEther(await ethers.provider.getBalance(user1.address)))
-        console.log("balance user1 + ganancia: " + ethers.utils.formatEther(valorEsperado) )
-
-        expect(valorEsperado).to.equal(await ethers.provider.getBalance(user1.address))         
-
-        // console.log("owner: "+ ownerAtack.address)
-        // console.log("owner: "+ ownerAtack2.address)
-        // console.log("deploy: " +deployedAtack.address)
+        expect(valorEsperado.sub(gasCost)).to.equal(await ethers.provider.getBalance(user1.address))         
 
     })
 });
