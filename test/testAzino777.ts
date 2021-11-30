@@ -4,7 +4,7 @@ import {BigNumber} from "ethers"
 
 
 
-describe("Token", function () {
+describe("Azino777", function () {
 
     const setupAzio777 = async() => {
         const [owner, user1] = await ethers.getSigners();
