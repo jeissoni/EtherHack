@@ -1,4 +1,6 @@
-import { ethers } from "hardhat";
+import {ethers} from "hardhat";
+import hre from "hardhat";
+
 import chai, { expect } from 'chai'
 import {BigNumber} from "ethers"
 
@@ -55,7 +57,16 @@ describe("PrivateRyan", function () {
 
 
     it('test actak smartContract', async() => {
+
+        console.log("antes: " + await ethers.provider.getBlockNumber())
+
+        await hre.network.provider.request({
+            method: 'evm_mine',
+            params: [],
+          });
         
+          console.log("despues: " + await ethers.provider.getBlockNumber())
+
        
 
         const {user1, initialBalance, deployedPrivateRyan, deployedAtack} = await privateRyan();         
