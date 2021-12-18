@@ -17,18 +17,18 @@ describe("PrivateRyan", function () {
 
         const initialBalance: BigNumber = ethers.utils.parseEther("10")
 
-        const tx = await owner.sendTransaction({
+        await owner.sendTransaction({
             to: deployedPrivateRyan.address,
             value: initialBalance
         });
 
         
         // instruccion necesaria para aumentar el numero de los bloques
-        for (let i = 0; i < 100; i++) {
-            await hre.network.provider.request({
-                method: 'evm_mine',
-            });
-        };
+        // for (let i = 0; i < 100; i++) {
+        //     await hre.network.provider.request({
+        //         method: 'evm_mine',
+        //     });
+        // };
         
         return {
             owner,
