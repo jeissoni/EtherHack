@@ -11,7 +11,7 @@ describe("CallMeMaybe", function () {
         const CallMeMaybeContract = await ethers.getContractFactory("CallMeMaybeContract");
         const deployed = await CallMeMaybeContract.deploy();
 
-        const initialBalance : BigNumber = ethers.utils.parseEther("10")
+        const initialBalance : BigNumber = ethers.utils.parseEther("100")
 
         const tx = await owner.sendTransaction({
             to: deployed.address,
@@ -28,7 +28,7 @@ describe("CallMeMaybe", function () {
 
 
     
-    it ('test fallback function', async() =>{
+    it ('fallback function atackContract', async() =>{
         const {deployed, owner, initialBalance} = await CallMeMaybe();
 
         let balanceDeployed
@@ -42,35 +42,33 @@ describe("CallMeMaybe", function () {
                
         const valueTotal : BigNumber = valueSend.add(initialBalance)
 
-        //console.log(tx)
         balanceDeployed = await ethers.provider.getBalance(deployed.address)
-
 
         expect(valueTotal).to.equal(balanceDeployed)       
     });  
 
+
+    
+    it('HereIsMyNumber error if call contract' , async()=>{
+        const {owner, deployed} = await CallMeMaybe();  
+
+        const testExtcodesizeCallMeMaybe = await ethers.getContractFactory("testExtcodesizeCallMeMaybe");
+        const deployedAtack = await testExtcodesizeCallMeMaybe.deploy(deployed.address);
+
+        await expect(deployedAtack.callHereIsMyNumber()).to.be.revertedWith("modifier")
+
+    })
+
         
     it ('call function', async() =>{
-        const {deployed, owner,user1, initialBalance} = await CallMeMaybe();
-
-        let balanceContrac :BigNumber = await ethers.provider.getBalance(deployed.address)
-        let balanceAntes : BigNumber = await ethers.provider.getBalance(user1.address)
-        let balanceOwner : BigNumber = await ethers.provider.getBalance(owner.address)
-
-        console.log("Owner balance antes " + ethers.utils.formatEther(balanceOwner))
-
-        console.log("contract balance antes " + ethers.utils.formatEther(balanceContrac))
-
-        console.log("user1 balance antes " + ethers.utils.formatEther(balanceAntes))
-
-        console.log("user1 "+ user1.address)
-        // console.log("owner balance " + ethers.utils.formatEther(balanceOwner))
+        const {deployed, user1, initialBalance} = await CallMeMaybe();  
 
         const HackCallMeMaybeContract = await ethers.getContractFactory("HackCallMeMaybeContract");
         const deployedAtack = await HackCallMeMaybeContract.connect(user1).deploy(deployed.address);
+        
+        let balanceContract2 : BigNumber = await ethers.provider.getBalance(deployedAtack.address)        
 
-        let balanceDespues : BigNumber = await ethers.provider.getBalance(user1.address)
-        console.log("user1 balance despues " + ethers.utils.formatEther(balanceDespues))
+        expect(balanceContract2).to.equal(initialBalance)
     });  
 
 

